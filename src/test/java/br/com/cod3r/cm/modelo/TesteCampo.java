@@ -69,4 +69,36 @@ public class TesteCampo {
 		assertFalse(resultado);
 	}
 
+	@Test
+	void testeValorPadraoAtributoMarcado() {
+		assertFalse(campo.isMarcado());
+	}
+
+	@Test
+	void testeAlternarMarcacao() {
+		campo.alternarMarcacao();
+
+		assertTrue(campo.isMarcado());
+	}
+
+	@Test
+	void testeAlternarMarcacaoDuasChamadas() {
+		campo.alternarMarcacao();
+		campo.alternarMarcacao();
+
+		assertFalse(campo.isMarcado());
+	}
+
+	@Test
+	void testeAbrirNaoMinadoNaoMarcado() {
+		assertTrue(campo.abrir());
+	}
+
+	@Test
+	void testeAbrirNaoMinadoMarcado() {
+		campo.alternarMarcacao();
+
+		assertFalse(campo.abrir());
+	}
+
 }
