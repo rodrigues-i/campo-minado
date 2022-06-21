@@ -74,7 +74,19 @@ public class Campo {
 		return this.vizinhos.stream().noneMatch(v -> v.minado);
 	}
 
+	void minar() {
+		this.minado = true;
+	}
+
 	public boolean isMarcado() {
-		return marcado;
+		return this.marcado;
+	}
+
+	public boolean isAberto() {
+		return this.aberto;
+	}
+
+	public boolean isFechado() {
+		return !this.isAberto();
 	}
 }
