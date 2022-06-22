@@ -3,6 +3,7 @@ package br.com.cod3r.cm.modelo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import br.com.cod3r.cm.excecao.ExplosaoException;
 
 public class Tabuleiro {
 
@@ -24,10 +25,16 @@ public class Tabuleiro {
 	}
 
 	public void abrir(int linha, int coluna) {
-		campos.stream()
-			.filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
-			.findFirst()  // retorna um optional de campo
-			.ifPresent(c -> c.abrir());  // usa-se em optionais
+		try {
+			campos.stream()
+				.filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
+				.findFirst()  // retorna um optional de campo
+				.ifPresent(c -> c.abrir());  // usa-se em optionais
+
+		} catch (ExplosaoException e) {
+			campos.forEach(c -> c.setAberto(true));
+			throw e;
+		}
 	}
 
 	public void alternarMarcacao(int linha, int coluna) {
@@ -58,9 +65,9 @@ public class Tabuleiro {
 		Predicate<Campo> minado = c -> c.isMinado(); // predicado retorna um boolean
 
 		do {
-			minasArmadas = campos.stream().filter(minado).count(); // count retorna um valor long
 			int aleatorio = (int) (Math.random() * campos.size());
 			campos.get(aleatorio).minar();
+			minasArmadas = campos.stream().filter(minado).count(); // count retorna um valor long
 
 		} while(minasArmadas < minas);
 	}
