@@ -2,6 +2,7 @@ package br.com.cod3r.cm.modelo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Tabuleiro {
 
@@ -22,6 +23,20 @@ public class Tabuleiro {
 		sortearMinas();
 	}
 
+	public void abrir(int linha, int coluna) {
+		campos.stream()
+			.filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
+			.findFirst()  // retorna um optional de campo
+			.ifPresent(c -> c.abrir());  // usa-se em optionais
+	}
+
+	public void alternarMarcacao(int linha, int coluna) {
+		campos.stream()
+			.filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
+			.findFirst()  // retorna um optional de campo
+			.ifPresent(c -> c.alternarMarcacao());  // usa-se em optionais
+	}
+
 	private void gerarCampos() {
 		for (int l = 0; l < linhas; l++) {
 			for (int c = 0; c < colunas; c++) {
@@ -39,7 +54,41 @@ public class Tabuleiro {
 	}
 
 	private void sortearMinas() {
+		long minasArmadas = 0;
+		Predicate<Campo> minado = c -> c.isMinado(); // predicado retorna um boolean
 
+		do {
+			minasArmadas = campos.stream().filter(minado).count(); // count retorna um valor long
+			int aleatorio = (int) (Math.random() * campos.size());
+			campos.get(aleatorio).minar();
+
+		} while(minasArmadas < minas);
+	}
+
+	public boolean objetivoAlcancado() {
+		return campos.stream().allMatch(c -> c.objetivoAlcancado()); // allMatch receve um predicado
+	}
+
+	public void reiniciar() {
+		campos.stream().forEach(c -> c.reiniciar());
+		sortearMinas();
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		int i = 0;
+		for (int l = 0; l < linhas; l++) {
+			for (int c = 0; c < colunas; c++) {
+				sb.append(" ");
+				sb.append(campos.get(i));
+				sb.append(" ");
+				i++;
+			}
+			sb.append("\n");
+		}
+
+		return sb.toString();
 	}
 }
 
